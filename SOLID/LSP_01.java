@@ -2,22 +2,18 @@ package SOLID;
 
 public class LSP_01 {
 
-    /*
-     * TASK:
-     * (classical example)
-     *
-     * The Square class does not behave like a Rectangle when
-     * setting the width and/or height. Please fix this to obey
-     * the LSP (Liskov Substitution Principle).
-     */
-    
-    public static class Rectangle {
+    // Interface for shapes that have an area
+    public interface Shape {
+        int getArea();
+    }
+
+    public static class Rectangle implements Shape {
         protected int width;
         protected int height;
 
         public Rectangle(int width, int height) {
-            setWidth(width);
-            setHeight(height);
+            this.width = width;
+            this.height = height;
         }
 
         public void setWidth(int width) {
@@ -28,35 +24,57 @@ public class LSP_01 {
             this.height = height;
         }
 
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        @Override
         public int getArea() {
             return width * height;
         }
     }
 
-    public static class Square extends Rectangle {
-        public Square(int width) {
-            super(width, width);
+    public static class Square implements Shape {
+        protected int side;
+
+        public Square(int side) {
+            this.side = side;
+        }
+
+        public void setSide(int side) {
+            this.side = side;
+        }
+
+        public int getSide() {
+            return side;
         }
 
         @Override
-        public void setWidth(int width) {
-            this.width = width;
-            this.height = width;
-        }
-
-        @Override
-        public void setHeight(int height) {
-            this.width = height;
-            this.height = height;
+        public int getArea() {
+            return side * side;
         }
     }
 
     public static void main(String[] args) {
+        // Test Rectangle
         Rectangle rectangle = new Rectangle(5, 10);
-        System.out.println("Rectangle Area: " + rectangle.getArea());
+        System.out.println("Rectangle (5x10) Area: " + rectangle.getArea()); // Expected: 50
 
-        Square square = new Square(0);
-        square.setWidth(5);
-        System.out.println("Square Area: " + square.getArea());
+        // Test Square
+        Square square = new Square(5);
+        System.out.println("Square (5x5) Area: " + square.getArea()); // Expected: 25
+
+        // Demonstrate LSP with a common interface (if needed)
+        // For example, a method that calculates area for any shape:
+        calculateAndPrintArea(rectangle);
+        calculateAndPrintArea(square);
+    }
+
+    public static void calculateAndPrintArea(Shape shape) {
+        System.out.println("Shape Area: " + shape.getArea());
     }
 }

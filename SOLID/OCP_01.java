@@ -2,30 +2,55 @@ package SOLID;
 
 public class OCP_01 {
 
-    /*
-     * TASK:
-     * How to add a new discount type (customerType) without
-     * violating OCP (Open/Closed Principle)?
-     */
-    
+    // 1. Create an interface for discount strategies
+    public interface DiscountStrategy {
+        double calculateDiscount(double amount);
+    }
+
+    // 2. Implement concrete discount strategies
+    public static class RegularDiscount implements DiscountStrategy {
+        @Override
+        public double calculateDiscount(double amount) {
+            return amount * 0.1;
+        }
+    }
+
+    public static class PremiumDiscount implements DiscountStrategy {
+        @Override
+        public double calculateDiscount(double amount) { // Corrected: removed the extra 'double'
+            return amount * 0.2;
+        }
+    }
+
+    // You can now easily add new discount types without modifying existing classes:
+    public static class GoldDiscount implements DiscountStrategy {
+        @Override
+        public double calculateDiscount(double amount) {
+            return amount * 0.3; // New discount type
+        }
+    }
+
+    // 3. Modify DiscountCalculator to use the interface
     public static class DiscountCalculator {
-        public double calculateDiscount(String customerType, double amount) {
-            if (customerType.equals("Regular")) {
-                return amount * 0.1;
-            }
-            else if (customerType.equals("Premium")) {
-                return amount * 0.2;
-            }
-            return 0.0;
+        public double calculateDiscount(DiscountStrategy discountStrategy, double amount) {
+            return discountStrategy.calculateDiscount(amount);
         }
     }
 
     public static void main(String[] args) {
         DiscountCalculator calculator = new DiscountCalculator();
-        double regularDiscount = calculator.calculateDiscount("Regular", 100.0);
-        double premiumDiscount = calculator.calculateDiscount("Premium", 100.0);
+
+        // Using different discount strategies
+        DiscountStrategy regular = new RegularDiscount();
+        DiscountStrategy premium = new PremiumDiscount();
+        DiscountStrategy gold = new GoldDiscount(); // New discount type
+
+        double regularDiscount = calculator.calculateDiscount(regular, 100.0);
+        double premiumDiscount = calculator.calculateDiscount(premium, 100.0);
+        double goldDiscount = calculator.calculateDiscount(gold, 100.0);
 
         System.out.println("Regular Discount: " + regularDiscount);
         System.out.println("Premium Discount: " + premiumDiscount);
+        System.out.println("Gold Discount: " + goldDiscount);
     }
 }

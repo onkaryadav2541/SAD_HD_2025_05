@@ -7,7 +7,7 @@ public class DIP_02 {
      * The class Employee violates the DIP (Dependency Inversion Principle).
      * Fix this!
      */
-    
+
     public static interface Notification {
         void doNotify();
     }
@@ -19,22 +19,36 @@ public class DIP_02 {
         }
     }
 
-    public static class Employee {
-        private EmailNotification emailNotification;
-
-        // Dependency Injection (again) composition
-        public Employee(EmailNotification emailNotification) {
-            this.emailNotification = emailNotification;
+    public static class SMSNotification implements Notification { // Added for demonstration of flexibility
+        @Override
+        public void doNotify() {
+            System.out.println("Sending notification via SMS!");
         }
-    
+    }
+
+    public static class Employee {
+        // Employee now depends on the Notification interface, not EmailNotification
+        private Notification notification;
+
+        // Dependency Injection via constructor
+        // The constructor now accepts an object of type Notification
+        public Employee(Notification notification) {
+            this.notification = notification;
+        }
+
         public void notifyEmployee() {
-            emailNotification.doNotify();
+            notification.doNotify();
         }
     }
 
     public static void main(String[] args) {
+        // Client code decides which concrete implementation to use
         EmailNotification emailNotification = new EmailNotification();
-        Employee employee = new Employee(emailNotification);
-        employee.notifyEmployee();
+        Employee employee1 = new Employee(emailNotification);
+        employee1.notifyEmployee();
+
+        SMSNotification smsNotification = new SMSNotification();
+        Employee employee2 = new Employee(smsNotification);
+        employee2.notifyEmployee();
     }
 }
